@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<meta charset="utf-8">
+	<title>mustache.html</title>
+    <link href="css/style.css" rel="stylesheet">
+    <script src="js/jquery-3.6.0.min.js"></script>
+	<script src="js/mustache.4.2.0.js"></script>
+</head>
+<body">
+
+	<h1>mustache.html</h1>
+	
+	<a href="./">Главная</a>
+	<a href="./?pg=info">Данные</a>
+	<a href="./?pg=act">Экшен</a>
+	
+	<div id="mypanel"></div>
+	
+	<script>
+		
+		function getParamPg() {
+			var url_string = window.location.href;
+		    var url = new URL(url_string);
+		    var paramValue = url.searchParams.get("pg");
+		    return !paramValue ? 'def' : paramValue;
+		}
+		
+		function renderPg() {
+			var pgName = getParamPg();
+			$.get( 'pgs/' + pgName + '/tml.html', function( tml ) {
+				console.log('tml: ' + tml);
+				$.get( 'pgs/' + pgName + '/data.json', function(data) {
+					var rendered = Mustache.render(tml, data);
+	        		$("#mypanel").html(rendered);
+				})
+				.fail(function() {
+				    $("#mypanel").html(tml);
+				 });
+			});
+		}
+		
+		(function () {
+			renderPg();
+		})();
+	</script>
+</body>
+</html>
